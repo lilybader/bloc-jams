@@ -6,10 +6,15 @@ body {
 	font-family: 'Open Sans';
 	color: white;
 	min-height: 100%;
+  background: -webkit-radial-gradient( #2B1339, #380C77 );
+  background: radial-gradient( #2B1339, #380C77 );
+  padding-bottom: 150px;
 }
 
 body.landing {
 	background: #5B5579;
+  color: #ffffff;
+  padding-bottom: 0
 }
 
 .hero-content {
@@ -43,4 +48,27 @@ body.landing {
  
   .selling-points .point p {
     font-size: 14px;
+  }
+
+  .collection-album-container {
+     margin-top: 30px;
+     margin-bottom: 20px;
+  }
+  .collection-album-container .caption {
+     margin-top: 10px;
+  }
+  .collection-album-container .caption p {
+     font-size: 16px;
+     font-weight: 300;
+     color: rgba(255, 255, 255, 0.6);
+  }
+  .collection-album-container .caption p a {
+    color: rgba(255, 255, 255, 0.6);
+  }
+  .collection-album-container .caption p a.album-name {
+    color: white;
+  }
+ 
+  .collection-album-container img {
+    max-width: 100%;
   }
