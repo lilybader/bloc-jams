@@ -38,13 +38,12 @@ function buildAlbumOverlay(albumURL) {
   return $(template);
 };
 
-function updateCollectionView() {
+var updateCollectionView = function() {
   var $collection = $(".collection-container .row");
   $collection.empty();
 
-  var albumNumGen = Math.floor((Math.random() * 100) + 25);
 
-  for (var i = 0; i < albumNumGen; i++) {
+  for (var i = 0; i < 33; i++) {
     var $newThumbnail = buildAlbumThumbnail();
     $collection.append($newThumbnail);
   }
@@ -52,6 +51,9 @@ function updateCollectionView() {
   var onHover = function(event) {
     $(this).append(buildAlbumOverlay("/album.html"));
   };
+
+  $collection.find('collection-album-image-container').hover(onHover);
+};
 
   var offHover = function(event) {
     $(this).find('.collection-album-image-overlay').remove();
