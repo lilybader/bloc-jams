@@ -92,289 +92,308 @@
 })();
 require.register("scripts/album", function(exports, require, module) {
 var albumPicasso = {
-	name: 'The Colors',
-	artist: 'Pablo Picasso',
-	label: 'Cubism',
-	year: '1881',
-	albumArtUrl: '/images/album-placeholder.png',
-	songs: [
-	{ name: 'Blue', length: '4:26'},
-	{ name: 'Green', length: '3:14'},
-	{ name: 'Red', length: '5:01' },
+  name: 'The Colors',
+  artist: 'Pablo Picasso',
+  label: 'Cubism',
+  year: '1881',
+  albumArtUrl: '/images/album-placeholder.png',
+  songs: [
+    { name: 'Blue', length: '4:26'},
+    { name: 'Green', length: '3:14'},
+    { name: 'Red', length: '5:01'},
     { name: 'Pink', length: '3:21'},
     { name: 'Magenta', length: '2:15'}
-	]
+  ]
 };
 
 var albumMarconi = {
-   name: 'The Telephone',
-   artist: 'Guglielmo Marconi',
-   label: 'EM',
-   year: '1909',
-   albumArtUrl: '/images/album-placeholder.png',
-   songs: [
-       { name: 'Hello, Operator?', length: '1:01' },
-       { name: 'Ring, ring, ring', length: '5:01' },
-       { name: 'Fits in your pocket', length: '3:21'},
-       { name: 'Can you hear me now?', length: '3:14' },
-       { name: 'Wrong phone number', length: '2:15'}
-     ]
- };
+  name: 'The Telephone',
+  artist: 'Guglielmo Marconi',
+  label: 'EM',
+  year: '1989',
+  albumArtUrl: '/images/album-placeholder.png',
+  songs: [
+    { name: 'Hello, Operator?', length: '1:01'},
+    { name: 'Ring, ring, ring', length: '5:01'},
+    { name: 'Fits in your pocket', length: '3:21'},
+    { name: 'Can you hear me now?', length: '3:14'},
+    { name: 'Wrong phone number', length: '2:15'}
+  ]
+};
 
- var currentlyPlayingSong = null;
+var currentlyPlayingSong = null;
 
 var createSongRow = function(songNumber, songName, songLength) {
-	var template = 
-		'<tr>'
-		+ ' <td class="song-number col-md-1" data-song-number="' + songNumber + '">' + songNumber + '</td>'
-		+ ' <td class="col-md-9">' + songName + '</td>'
-		+ ' <td class="col-md-2">' + songLength + '</td>'
-		+ ' </tr>'
-		;
+  var template = '<tr>'
+  + '  <td class="song-number col-md-1" data-song-number="'+ songNumber +'">' + songNumber + '</td>'
+  + '  <td class="col-md-9">' + songName + '</td>'
+  + '  <td class="col-md-2">' + songLength + '</td>'
+  + '</tr>';
 
-	var $row = $(template);
+  var $row = $(template);
 
-	var onHover = function(event) {
-		var songNumberCell = $(this).find('.song-number');
-		var songNumber = songNumberCell.data('song-number');
-		if (songNumber !== currentlyPlayingSong) {
-		songNumberCell.html('<a class="album-song-button"><i class="fa fa-play"></i></a>');
-		}
-	};
+  var onHover = function(event) {
+    songNumberCell = $(this).find('.song-number');
+    songNumber = songNumberCell.data('song-number');
+    if (songNumber !== currentlyPlayingSong) {
+      songNumberCell.html('<a class="album-song-button"><i class="fa fa-play"></i></a>');
+    }
+  };
 
-	var offHover = function(event)
-		var songNumberCell = $(this).find('.song-number');
-		var songNumber = songNumberCell.data('song-number');
-		if (songNumber !== currentlyPlayingSong) {
-		songNumberCell.html(songNumber);
-		}
-	};
+  var offHover = function(event) {
+    songNumberCell = $(this).find('.song-number');
+    if (songNumber !== currentlyPlayingSong) {
+      songNumberCell.html(songNumber);
+    }
+  };
 
-	var clickHandler = function(event) {
-		var songNumber = $(this).data('song-number');
+  var clickHandler = function(event) {
+    songNumber = $(this).data('song-number');
 
-		if (currentlyPlayingSong !== null) {
+    if (currentlyPlayingSong !== null) {
+      currentlyPlayingCell = $('.song-number[data-song-number="' + currentlyPlayingSong + '"]');
+      currentlyPlayingCell.html(currentlyPlayingSong);
+    }
 
-       var currentlyPlayingCell = $('.song-number[data-song-number="' + currentlyPlayingSong + '"]');
-       currentlyPlayingCell.html(currentlyPlayingSong);
-     }
- 
-     if (currentlyPlayingSong !== songNumber) {
+    if (currentlyPlayingSong !== songNumber) {
+      $(this).html('<a class="album-song-button"><i class="fa fa-pause"></i></a>');
+      currentlyPlayingSong = songNumber;
+    }
+    else if (currentlyPlayingSong === songNumber) {
+      $(this).html('<a class="album-song-button"><i class="fa fa-play"></i></a>');
+      currentlyPlayingSong = null;
+    }
+    
+  };
 
-       $(this).html('<a class="album-song-button"><i class="fa fa-pause"></i></a>');
-       currentlyPlayingSong = songNumber;
-     }
-     else if (currentlyPlayingSong === songNumber) {
+  $row.find('.song-number').click(clickHandler);
 
-       $(this).html('<a class="album-song-button"><i class="fa fa-play"></i></a>');
-       currentlyPlayingSong = null;
-     }
-   };
+  $row.hover(onHover, offHover);
+  return $row;
 
-	$row.find('song-number').click(clickHandler);
-	$row.hover(onHover, offHover);
-	return $row;
 };
 
-var changeAlbumView = function(album){
-	var $albumTitle = $('.album-title');
-	$albumTitle.text(album.name);
+var changeAlbumView = function(album) {
 
-	var $albumArtist = $('.album-artist');
-	$albumArtist.text(album.artist);
+  var $albumTitle = $('.album-title');
+  $albumTitle.text(album.name);
 
-	var $albumMeta = $('.album-meta-info');
-	$albumMeta.text(album.year + ' on ' + album.label);
+  var $albumArtist = $('.album-artist');
+  $albumArtist.text(album.artist);
 
-	var $albumImage = $('.album-image');
-	$albumImage.attr('src', album.albumArtUrl);
+  var $albumMeta = $('.album-meta-info');
+  $albumMeta.text(album.year + " on " + album.label);
 
-	var $songList = $('.album-song-listing');
-	$songList.empty();
-	var songs = album.songs;
-	for (var i = 0; i < song.length; i++) {
-		var songData = songs[i];
-		var $newRow = createSongRow(i + 1, songData.name, songData.length);
-		$songList.append($newRow);
-	}
+  var $albumImage = $('.album-image img');
+  $albumImage.attr('src', album.albumArtUrl);
+
+
+  var $songList = $('.album-song-listing');
+  $songList.empty();
+  var songs = album.songs;
+  for (var i = 0; i < songs.length; i++) {
+    var songData = songs[i];
+    var $newRow = createSongRow( i+1, songData.name, songData.length);
+    $songList.append($newRow);
+  }
 };
-
 
 var updateSeekPercentage = function($seekBar, event) {
-	var barWidth = $seekBar.width();
-	var offsetX = event.pageX - seekBar.offset().left;
+  var barWidth = $seekBar.width();
+  var offsetX = event.pageX - $seekBar.offset().left; // get mouse x offset here
 
-	var offsetXPercent = (offsetX / barWidth) * 100;
-	offsetXPercent = Math.max(0, offsetXPercent);
-	offsetXPercent = Math.min(100, offsetXPercent);
+  var offsetXPercent = (offsetX / $seekBar.width()) * 100;
+  offsetXPercent = Math.max(0, offsetXPercent);
+  offsetXPercent = Math.min(100, offsetXPercent);
 
-	var percentagesString = offsetXPercent + '%';
-	$seekBar.find('.fill').width(percentagesString);
-	$seekBar.find('.thumb').css({left: percentagesString});
-}
+  var percentageString = offsetXPercent + '%';
+  $seekBar.find('.fill').width(percentageString);
+  $seekBar.find('.thumb').css({left: percentageString});
+};
 
 var setupSeekBars = function() {
- 
-   $seekBars = $('.player-bar .seek-bar');
-	$seekBars.click(function(event) {
-		updateSeekPercentage($(this), event);
-	});
+  $seekBars = $('.player-bar .seek-bar');
+  $seekBars.click(function(event) {
+    updateSeekPercentage($(this), event);
+  });
 
-	$seekBars.find('.thumb').mousedown(function(event) {
-		var $seekBar = $(this).parent();
+  $seekBars.find('.thumb').mousedown(function(event) {
+    var $seekBar = $(this).parent();
 
-		$seekBar.addClass('no-animate');
+    $seekBar.addClass('no-animate');
 
-		$(document).bind('mousemove.thumb', function(event) {
-			updateSeekPercentage($seekBar, event);
-		});
+    $(document).bind('mousemove.thumb', function(event) {
+      updateSeekPercentage($seekBar, event);
+    });
 
-		
-		$(document).bind('mouseup.thumb', function() {
-			$seekBar.removeClass('no-animate');
-			$(document).unbind('mousemove.thumb');
-			$(document).unbind('mouseup.thumb');
-		});
-	});
+    $(document).bind('mouseup.thumb', function() {
+      $seekBar.removeClass('no-animate');
+
+      $(document).unbind('mousemove.thumb');
+      $(document).unbind('mouseup.thumb');
+    });
+  });
 };
 
 if (document.URL.match(/\/album.html/)) {
-	$(document).ready(function() {
-		changeAlbumView(albumPicasso);
-
-		$('.col-md-3').click(function() {
-			changeAlbumView(albumMixtape);
-		});
-
-		setupSeekBars();
-	});
+  $(document).ready(function() {
+    changeAlbumView(albumMarconi);
+    setupSeekBars();
+  });
 }
 });
 
 ;require.register("scripts/app", function(exports, require, module) {
-require("./landing");
-require('./collection');
-require('./album');
-require('./profile');
+// require("./landing");
+// require("./collection");
+// require("./album");
+// require("./profile");
+
+angular.module('BlocJams', []).controller('Landing.controller', ['$scope', function($scope) {
+  $scope.subText = "Turn the music up!";
+
+  $scope.subTextClicked = function() {
+    $scope.subText += '!';
+  };
+
+  $scope.albumURLs = [
+  '/images/album-placeholders/album-1.jpg',
+  '/images/album-placeholders/album-2.jpg',
+  '/images/album-placeholders/album-3.jpg',
+  '/images/album-placeholders/album-4.jpg',
+  '/images/album-placeholders/album-5.jpg',
+  '/images/album-placeholders/album-6.jpg',
+  '/images/album-placeholders/album-7.jpg',
+  '/images/album-placeholders/album-8.jpg',
+  '/images/album-placeholders/album-9.jpg'
+  ];
+
+  $scope.shuffleImages = function() {
+    shuffle($scope.albumURLs);
+  };
+
+}]);
+
+function shuffle(o){ //v1.0
+    for(var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
+    return o;
+}
 });
 
 ;require.register("scripts/collection", function(exports, require, module) {
-function buildAlbumThumbnail() {
-  var template =
-      '<div class="collection-album-container col-md-2">'
-    + '  <div class="collection-album-image-container">'
-    + '    <img src="/images/album-placeholder.png"/>'
-    + '  </div>'
-    + '  <div class="caption album-collection-info">'
-    + '    <p>'
-    + '      <a class="album-name" href="/album.html"> Album Name </a>'
-    + '      <br/>'
-    + '      <a href="/album.html"> Artist name </a>'
-    + '      <br/>'
-    + '      X songs'
-    + '      <br/>'
-    + '      X:XX Total Length'
-    + '      <br/>'
-    + '    </p>'
-    + '  </div>'
-    + '</div>';
+var buildAlbumThumbnail = function() {
+  var template = '<div class="collection-album-container col-md-2">'
+  + '  <div class="collection-album-image-container">'
+  + '    <img src="/images/album-placeholder.png">'
+  + '  </div>'
+  + '  <div class="caption album-collection-info">'
+  + '    <p>'
+  + '      <a class="album-name" href="/album.html"> Album Name </a>'
+  + '      <br/>'
+  + '      <a href="/album.html"> Artist name </a>'
+  + '      <br/>'
+  + '      X songs'
+  + '      <br/>'
+  + '    </p>'
+  + '  </div>'
+  + '</div>';
 
- return $(template);
-};
-
-function buildAlbumOverlay(albumURL) {
-  var template =
-      '<div class="collection-album-image-overlay">'
-    + ' <div class="collection-overlay-content">'
-    + '   <a class="collection-overlay-button" href="' + albumURL + '">'
-    + '     <i class="fa fa-play"></i>'
-    + '   </a>'
-    + '   &nbsp;'
-    + '   <a class="collection-overlay-button">'
-    + '     <i class="fa fa-plus"></i>'
-    + '   </a>'
-    + ' </div>'
-    + '</div>'
-    ;
   return $(template);
 };
 
-var updateCollectionView = function() {
-  var $collection = $(".collection-container .row");
-  $collection.empty();
 
+var buildAlbumOverlay = function(albumURL) {
+  var template = 
+  '<div class="collection-album-image-overlay">'
+  + '  <div class="collection-overlay-content">'
+  + '    <a class="collection-overlay-button" href="' + albumURL + '">'
+  + '      <i class="fa fa-play"></i>'
+  + '    </a>'
+  + '    &nbsp;'
+  + '    <a class="collection-overlay-button" href="">'
+  + '      <i class="fa fa-plus"></i>'
+  + '    </a>'
+  + '  </div>'
+  + '</div>'
+  ;
 
-  for (var i = 0; i < 33; i++) {
-    var $newThumbnail = buildAlbumThumbnail();
-    $collection.append($newThumbnail);
-  }
-
-  var onHover = function(event) {
-    $(this).append(buildAlbumOverlay("/album.html"));
-  };
-
-  $collection.find('collection-album-image-container').hover(onHover);
+  return $(template);
 };
 
-  var offHover = function(event) {
-    $(this).find('.collection-album-image-overlay').remove();
-  };
-
-    $collection.find('.collection-album-image-container').hover(onHover, offHover);
-};
 
 if (document.URL.match(/\/collection.html/)) {
-  
+  // Wait until the HTML is fully processed
+
   $(document).ready(function() {
     
-    updateCollectionView();
+    var $collection = $(".collection-container .row");
+    
+    $collection.empty();
+
+    for (var i = 0; i < 33; i++) {
+      var $newThumbnail = buildAlbumThumbnail();
+
+      $collection.append($newThumbnail);
+    }
+
+    var onHover = function(event) {
+      $(this).append(buildAlbumOverlay("/album.html"));
+    };
+
+    var offHover = function(event) {
+      $(this).find('.collection-album-image-overlay').remove();
+    };
+
+    $collection.find('.collection-album-image-container').hover(onHover, offHover);
+
   });
 }
 });
 
 ;require.register("scripts/landing", function(exports, require, module) {
 $(document).ready(function() {
-	$('.hero-content h3').click(function(){
-		var subText = $(this).text();
-		$(this).text(subText + "!")
-	});
+  $('.hero-content h3').click(function() {
+    subText = $(this).text();
+    $(this).text(subText + " !");
+  });
 
-	var onHoverAction = function(event) {
-		console.log('Hover action triggered.');
-		$(this).animate({'margin-top': '10px'});
-	};
+  var onHoverAction = function(event) {
+    console.log('Hover action triggered.');
+    $(this).animate({'margin-top': '10px'});
+  };
 
-	var offHoverAction = function(event) {
-		console.log('Off-hover action triggered.');
-		$(this).animate({'margin-top': '0px'});
-	};
+  var offHoverAction = function(event) {
+    console.log('Off-hover action triggered');
+    $(this).animate({'margin-top': '0px'});
+  };
 
-	$('.selling-points .point').hover(onHoverAction, offHoverAction);
-    
-    
+  $('.selling-points .point').hover(onHoverAction, offHoverAction);
 });
 });
 
 ;require.register("scripts/profile", function(exports, require, module) {
 var tabsContainer = ".user-profile-tabs-container";
+
 var selectTabHandler = function(event) {
   $tab = $(this);
+
   $(tabsContainer + " li").removeClass('active');
   $tab.parent().addClass('active');
   selectedTabName = $tab.attr('href');
   console.log(selectedTabName);
+
   $(".tab-pane").addClass('hidden');
   $(selectedTabName).removeClass('hidden');
   event.preventDefault();
 };
- 
- if (document.URL.match(/\/profile.html/)) {
-   $(document).ready(function() {
-     var $tabs = $(tabsContainer + " a");
-     $tabs.click(selectTabHandler);
-     $tabs[0].click();
-   });
- }
+
+if (document.URL.match(/\/profile.html/)) {
+  $(document).ready(function() {
+    var $tabs = $(tabsContainer + " a");
+    $tabs.click(selectTabHandler);
+    $tabs[0].click();
+  });
+}
 });
 
 ;
