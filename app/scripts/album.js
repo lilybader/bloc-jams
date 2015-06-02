@@ -38,6 +38,7 @@ var createSongRow = function(songNumber, songName, songLength) {
 		+ ' <td class="col-md-2">' + songLength + '</td>'
 		+ ' </tr>'
 		;
+
 	var $row = $(template);
 
 	var onHover = function(event) {
@@ -61,7 +62,7 @@ var createSongRow = function(songNumber, songName, songLength) {
 
 		if (currentlyPlayingSong !== null) {
 
-       currentlyPlayingCell = $('.song-number[data-song-number="' + currentlyPlayingSong + '"]');
+       var currentlyPlayingCell = $('.song-number[data-song-number="' + currentlyPlayingSong + '"]');
        currentlyPlayingCell.html(currentlyPlayingSong);
      }
  
@@ -76,8 +77,6 @@ var createSongRow = function(songNumber, songName, songLength) {
        currentlyPlayingSong = null;
      }
    };
-
-
 
 	$row.find('song-number').click(clickHandler);
 	$row.hover(onHover, offHover);
@@ -107,8 +106,53 @@ var changeAlbumView = function(album){
 	}
 };
 
+
+var updateSeekPercentage = function($seekBar, event) {
+	var barWidth = $seekBar.width();
+	var offsetX = event.pageX - seekBar.offset().left;
+
+	var offsetXPercent = (offsetX / barWidth) * 100;
+	offsetXPercent = Math.max(0, offsetXPercent);
+	offsetXPercent = Math.min(100, offsetXPercent);
+
+	var percentagesString = offsetXPercent + '%';
+	$seekBar.find('.fill').width(percentagesString);
+	$seekBar.find('.thumb').css({left: percentagesString});
+}
+
+var setupSeekBars = function() {
+ 
+   $seekBars = $('.player-bar .seek-bar');
+	$seekBars.click(function(event) {
+		updateSeekPercentage($(this), event);
+	});
+
+	$seekBars.find('.thumb').mousedown(function(event) {
+		var $seekBar = $(this).parent();
+
+		$seekBar.addClass('no-animate');
+
+		$(document).bind('mousemove.thumb', function(event) {
+			updateSeekPercentage($seekBar, event);
+		});
+
+		
+		$(document).bind('mouseup.thumb', function() {
+			$seekBar.removeClass('no-animate');
+			$(document).unbind('mousemove.thumb');
+			$(document).unbind('mouseup.thumb');
+		});
+	});
+};
+
 if (document.URL.match(/\/album.html/)) {
 	$(document).ready(function() {
 		changeAlbumView(albumPicasso);
+
+		$('.col-md-3').click(function() {
+			changeAlbumView(albumMixtape);
+		});
+
+		setupSeekBars();
 	});
 }
