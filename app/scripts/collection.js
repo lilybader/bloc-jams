@@ -60,12 +60,12 @@ var updateCollectionView = function() {
   };
 
     $collection.find('.collection-album-image-container').hover(onHover, offHover);
-};
+
 
 if (document.URL.match(/\/collection.html/)) {
   
   $(document).ready(function() {
     
     updateCollectionView();
-  });
-}
+    });
+  }
