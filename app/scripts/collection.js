@@ -25,7 +25,7 @@ function buildAlbumOverlay(albumURL) {
   var template =
       '<div class="collection-album-image-overlay">'
     + ' <div class="collection-overlay-content">'
-    + '   <a class="collection-overlay-button" href="' + albumURL + '">'
+    + '   <a class="collection-overlay-button" ng-click="playAlbum(album)">'
     + '     <i class="fa fa-play"></i>'
     + '   </a>'
     + '   &nbsp;'
