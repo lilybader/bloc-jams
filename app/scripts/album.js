@@ -49,11 +49,11 @@ var createSongRow = function(songNumber, songName, songLength) {
 		}
 	};
 
-	var offHover = function(event)
+	var offHover = function(event) {
 		var songNumberCell = $(this).find('.song-number');
 		var songNumber = songNumberCell.data('song-number');
 		if (songNumber !== currentlyPlayingSong) {
-		songNumberCell.html(songNumber);
+			songNumberCell.html(songNumber);
 		}
 	};
 
