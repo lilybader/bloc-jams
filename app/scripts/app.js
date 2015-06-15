@@ -1,11 +1,11 @@
- // includes landing.js code
- // require('./landing');
- // require('./collection');
- // require('./album');
- // require('./profile');
- 
- // Example Album
- var albumPicasso = {
+// includes landing.js code
+// require('./landing');
+// require('./collection');
+// require('./album');
+// require('./profile');
+
+// Example Album
+var albumPicasso = {
   name: 'The Colors',
   artist: 'Pablo Picasso',
   label: 'Cubism',
@@ -18,16 +18,16 @@
     { name: 'Pink', length: '154.81', audioUrl: '/music/placeholders/pink' },
     { name: 'Magenta', length: '375.92', audioUrl: '/music/placeholders/magenta' }
   ]
- };
- 
- // App declaration including ui-router
- blocJams = angular.module('BlocJams', ['ui.router']);
- 
- // Providers: services used by Angular modules to configure or define default behaviour for certain module
- blocJams.config(['$stateProvider', '$locationProvider', function($stateProvider, $locationProvider) {
+};
+
+// App declaration including ui-router
+blocJams = angular.module('BlocJams', ['ui.router']);
+
+// Providers: services used by Angular modules to configure or define default behaviour for certain module
+blocJams.config(['$stateProvider', '$locationProvider', function($stateProvider, $locationProvider) {
   // tells app we want to configure states to match plain routes
   $locationProvider.html5Mode(true);
- 
+
   // configures state definitions using ui-router
   // .state() takes two arguments: name of state, object that defines specific properties of state
   $stateProvider.state('landing', {
@@ -35,29 +35,29 @@
     controller: 'Landing.controller',
     templateUrl: '/templates/landing.html'
   });
- 
+
   $stateProvider.state('collection', {
     url: '/collection',
     controller: 'Collection.controller',
     templateUrl: '/templates/collection.html'
   });
- 
+
   $stateProvider.state('album', {
     url: '/album',
     controller: 'Album.controller',
     templateUrl: '/templates/album.html'
   });
- }]);
- 
- // Cleaner way to call the controller than crowding it on the module definition
- blocJams.controller('Landing.controller', ['$scope', function($scope) {
+}]);
+
+// Cleaner way to call the controller than crowding it on the module definition
+blocJams.controller('Landing.controller', ['$scope', function($scope) {
   $scope.mainTitle = 'Bloc Jams';
   $scope.subText = 'Turn the music up!';
- 
+
     $scope.subTextClicked = function() {
       $scope.subText += '!';
     };
- 
+
     $scope.albumURLs = [
       '/images/album-placeholders/album-1.jpg',
       '/images/album-placeholders/album-2.jpg',
@@ -69,32 +69,32 @@
       '/images/album-placeholders/album-8.jpg',
       '/images/album-placeholders/album-9.jpg',
     ];
- }]);
- 
- blocJams.controller('Collection.controller', ['$scope', 'SongPlayer', function($scope, SongPlayer) {
+}]);
+
+blocJams.controller('Collection.controller', ['$scope', 'SongPlayer', function($scope, SongPlayer) {
   $scope.albums = [];
     for (var i = 0; i < 33; i++) {
       $scope.albums.push(angular.copy(albumPicasso));
     };
- 
+
   $scope.playAlbum = function(album) {
     SongPlayer.setSong(album, album.songs[0]); // Targets first song in the array.
   };
- }]);
- 
- blocJams.controller('Album.controller', ['$scope', 'SongPlayer', function($scope, SongPlayer) {
+}]);
+
+blocJams.controller('Album.controller', ['$scope', 'SongPlayer', function($scope, SongPlayer) {
   $scope.album = angular.copy(albumPicasso);
- 
+
   var hoveredSong = null;
- 
+
   $scope.onHoverSong = function(song) {
     hoveredSong = song;
   };
- 
+
   $scope.offHoverSong = function(song) {
     hoveredSong = null;
   };
- 
+
   $scope.getSongState = function(song) {
     if (song === SongPlayer.currentSong && SongPlayer.playing) {
       return 'playing';
@@ -104,62 +104,62 @@
     }
     return 'default';
   };
- 
+
   $scope.playSong = function(song) {
     SongPlayer.setSong($scope.album, song);
   };
- 
+
   $scope.pauseSong = function(song) {
     SongPlayer.pause();
   };
- }]);
- 
- blocJams.controller('PlayerBar.controller', ['$scope', 'SongPlayer', function($scope, SongPlayer) {
+}]);
+
+blocJams.controller('PlayerBar.controller', ['$scope', 'SongPlayer', function($scope, SongPlayer) {
   $scope.songPlayer = SongPlayer;
 
-   $scope.volumeClass = function() {
-   return {
-     'fa-volume-off': SongPlayer.volume == 0,
-     'fa-volume-down': SongPlayer.volume <= 70 && SongPlayer.volume > 0,
-     'fa-volume-up': SongPlayer.volume > 70
-   }
- }
+  $scope.volumeClass = function() {
+    return {
+      'fa-volume-off': SongPlayer.volume == 0,
+      'fa-volume-down': SongPlayer.volume <= 70 && SongPlayer.volume > 0,
+      'fa-volume-up': SongPlayer.volume > 70
+    }
+  }
 
- $scope.muteToggle = function(volume) {
-   var startVolume = SongPlayer.volume;
-   console.log(startVolume);
+  $scope.muteToggle = function(volume) {
+    var startVolume = SongPlayer.volume;
+    console.log(startVolume);
 
-   if (startVolume > 0) {
-     SongPlayer.previousVolume = startVolume;
-     SongPlayer.mute();
-   }
-   else {
-     SongPlayer.volume = SongPlayer.previousVolume;
-     SongPlayer.setVolume(SongPlayer.volume);
-   }
- }
+    if (startVolume > 0) {
+      SongPlayer.previousVolume = startVolume;
+      SongPlayer.mute();
+    }
+    else {
+      SongPlayer.volume = SongPlayer.previousVolume;
+      SongPlayer.setVolume(SongPlayer.volume);
+    }
+  }
 
- SongPlayer.onTimeUpdate(function(event, time) {
-   $scope.$apply(function() {
-     $scope.playTime = time;
-   });
- });
+  SongPlayer.onTimeUpdate(function(event, time) {
+    $scope.$apply(function() {
+      $scope.playTime = time;
+    });
+  });
 
 
- }]);
- 
+}]);
+
 blocJams.service('SongPlayer', ['$rootScope', function($rootScope) {
   var currentSoundFile = null;
- 
+
   function trackIndex(album, song) {
     return album.songs.indexOf(song);
   };
- 
+
   return {
     currentSong: null,
     currentAlbum: null,
     playing: false,
-    volume: 90,
+    volume:90,
 
     play: function() {
       this.playing = true;
@@ -188,11 +188,11 @@ blocJams.service('SongPlayer', ['$rootScope', function($rootScope) {
       this.setSong(this.currentAlbum, song);
     },
     mute: function(volume) {
-     if (volume > 0) {
-       SongPlayer.volume == 0;
-     }
-     this.volume = 0;
-   },
+      if (volume > 0) {
+        SongPlayer.volume == 0;
+      }
+      this.volume = 0;
+    },
     seek: function(time) {
       // Checks to make sure that a sound file is playing before seeking
       if (currentSoundFile) {
@@ -200,38 +200,38 @@ blocJams.service('SongPlayer', ['$rootScope', function($rootScope) {
         currentSoundFile.setTime(time);
       }
     },
-   onTimeUpdate: function(callback) {
-     return $rootScope.$on('sound:timeupdate', callback);
-   },
-   setVolume: function(volume) {
-     if (currentSoundFile) {
-       currentSoundFile.setVolume(volume);
-     }
-     this.volume = volume;
-   },
+    onTimeUpdate: function(callback) {
+      return $rootScope.$on('sound:timeupdate', callback);
+    },
+    setVolume: function(volume) {
+      if (currentSoundFile) {
+        currentSoundFile.setVolume(volume);
+      }
+      this.volume = volume;
+    },
     setSong: function(album, song) {
       if (currentSoundFile) {
         currentSoundFile.stop();
       };
       this.currentAlbum = album;
       this.currentSong = song;
- 
+
       currentSoundFile = new buzz.sound(song.audioUrl, {
         formats: [ "mp3" ],
         preload: true
       });
- 
-     currentSoundFile.bind('timeupdate', function(e) {
-       $rootScope.$broadcast('sound:timeupdate', this.getTime());
-     });
+
+      currentSoundFile.bind('timeupdate', function(e) {
+        $rootScope.$broadcast('sound:timeupdate', this.getTime());
+      });
 
       this.play();
     }
   };
 }]);
- 
- blocJams.directive('slider', ['$document', function($document){
- 
+
+blocJams.directive('slider', ['$document', function($document){
+
   // Returns a number between 0 and 1 to determine where the mouse event happened along the slider bar.
   var calculateSliderPercentFromMouseEvent = function($slider, event) {
     var offsetX =  event.pageX - $slider.offset().left; // Distance from left
@@ -241,21 +241,21 @@ blocJams.service('SongPlayer', ['$rootScope', function($rootScope) {
     offsetXPercent = Math.min(1, offsetXPercent);
     return offsetXPercent;
   };
- 
+
   var numberFromValue = function(value, defaultValue) {
     if (typeof value === 'number') {
       return value;
     }
- 
+
     if (typeof value === 'undefined') {
       return defaultValue;
     }
- 
+
     if (typeof value === 'string') {
       return Number(value);
     }
   }
- 
+
   return {
     templateUrl: '/templates/directives/slider.html',
     replace: true,
@@ -270,37 +270,37 @@ blocJams.service('SongPlayer', ['$rootScope', function($rootScope) {
       scope.value = 0;
       scope.max = 100;
       var $seekBar = $(element);
- 
+
       // console.log(attributes);
       attributes.$observe('value', function(newValue) {
         scope.value = numberFromValue(newValue, 0);
       });
- 
+
       attributes.$observe('max', function(newValue) {
         scope.max = numberFromValue(newValue, 100) || 100;
       });
- 
+
       var percentString = function() {
         var value = scope.value || 0;
         var max = scope.max || 100;
         percent = value / max * 100;
         return percent + "%";
       };
- 
+
       scope.fillStyle = function() {
         return {width: percentString()};
       };
- 
+
       scope.thumbStyle = function() {
         return {left: percentString()};
       };
- 
+
       scope.onClickSlider = function(event) {
         var percent = calculateSliderPercentFromMouseEvent($seekBar, event);
         scope.value = percent * scope.max;
         notifyCallback(scope.value);
       };
- 
+
       scope.trackThumb = function() {
         $document.bind('mousemove.thumb', function(event){
           var percent = calculateSliderPercentFromMouseEvent($seekBar, event);
@@ -309,14 +309,14 @@ blocJams.service('SongPlayer', ['$rootScope', function($rootScope) {
             notifyCallback(scope.value);
           });
         });
- 
+
         //cleanup
         $document.bind('mouseup.thumb', function(){
           $document.unbind('mousemove.thumb');
           $document.unbind('mouseup.thumb');
         });
       }
- 
+
       // handle changes caused by function passed into on-change
       var notifyCallback = function(newValue) {
         if (typeof scope.onChange === 'function') {
@@ -325,31 +325,31 @@ blocJams.service('SongPlayer', ['$rootScope', function($rootScope) {
       };
     }
   }
- }]);
+}]);
 
 // filter definition to show time progression in minutes and seconds
 blocJams.filter('timecode', function() {
- return function(seconds) {
-   seconds = Number.parseFloat(seconds);
+  return function(seconds) {
+    seconds = Number.parseFloat(seconds);
 
-   // returned when no time is provided
-   if (Number.isNaN(seconds)) {
-     return '-:--';
-   }
+    // returned when no time is provided
+    if (Number.isNaN(seconds)) {
+      return '-:--';
+    }
 
-   // make it a whole number
-   var wholeSeconds = Math.floor(seconds);
-   var minutes = Math.floor(wholeSeconds / 60);
-   remainingSeconds = wholeSeconds % 60;
-   var output = minutes + ':';
+    // make it a whole number
+    var wholeSeconds = Math.floor(seconds);
+    var minutes = Math.floor(wholeSeconds / 60);
+    remainingSeconds = wholeSeconds % 60;
+    var output = minutes + ':';
 
-   // zero pad seconds, so 9 seconds should be :09
-   if (remainingSeconds < 10) {
-     output += '0';
-   }
+    // zero pad seconds, so 9 seconds should be :09
+    if (remainingSeconds < 10) {
+      output += '0';
+    }
 
-   output += remainingSeconds;
+    output += remainingSeconds;
 
-   return output;
- }
-}
+    return output;
+  }
+})
