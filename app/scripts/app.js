@@ -117,11 +117,34 @@
  blocJams.controller('PlayerBar.controller', ['$scope', 'SongPlayer', function($scope, SongPlayer) {
   $scope.songPlayer = SongPlayer;
 
+   $scope.volumeClass = function() {
+   return {
+     'fa-volume-off': SongPlayer.volume == 0,
+     'fa-volume-down': SongPlayer.volume <= 70 && SongPlayer.volume > 0,
+     'fa-volume-up': SongPlayer.volume > 70
+   }
+ }
+
+ $scope.muteToggle = function(volume) {
+   var startVolume = SongPlayer.volume;
+   console.log(startVolume);
+
+   if (startVolume > 0) {
+     SongPlayer.previousVolume = startVolume;
+     SongPlayer.mute();
+   }
+   else {
+     SongPlayer.volume = SongPlayer.previousVolume;
+     SongPlayer.setVolume(SongPlayer.volume);
+   }
+ }
+
  SongPlayer.onTimeUpdate(function(event, time) {
    $scope.$apply(function() {
      $scope.playTime = time;
    });
  });
+
 
  }]);
  
@@ -136,7 +159,8 @@ blocJams.service('SongPlayer', ['$rootScope', function($rootScope) {
     currentSong: null,
     currentAlbum: null,
     playing: false,
- 
+    volume: 90,
+
     play: function() {
       this.playing = true;
       currentSoundFile.play();
@@ -163,6 +187,12 @@ blocJams.service('SongPlayer', ['$rootScope', function($rootScope) {
       var song = this.currentAlbum.songs[currentTrackIndex];
       this.setSong(this.currentAlbum, song);
     },
+    mute: function(volume) {
+     if (volume > 0) {
+       SongPlayer.volume == 0;
+     }
+     this.volume = 0;
+   },
     seek: function(time) {
       // Checks to make sure that a sound file is playing before seeking
       if (currentSoundFile) {
@@ -172,6 +202,12 @@ blocJams.service('SongPlayer', ['$rootScope', function($rootScope) {
     },
    onTimeUpdate: function(callback) {
      return $rootScope.$on('sound:timeupdate', callback);
+   },
+   setVolume: function(volume) {
+     if (currentSoundFile) {
+       currentSoundFile.setVolume(volume);
+     }
+     this.volume = volume;
    },
     setSong: function(album, song) {
       if (currentSoundFile) {
